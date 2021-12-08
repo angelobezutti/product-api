@@ -1,5 +1,6 @@
 package com.bzt.controller;
 
+import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -16,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -77,6 +79,10 @@ public class ProductController {
 		return ResponseEntity.notFound().build();
 	}
 	
+	@GetMapping("/search")
+	public List<Product> searchProduct(@RequestParam(required = false ,value = "q") String q, @RequestParam(required = false ,value = "minPrice") BigDecimal minPrice, @RequestParam(required = false , value = "maxPrice") BigDecimal maxPrice){
+		return productRepository.findBySearch(q, minPrice, maxPrice);
+	}
 	
 	
 }
