@@ -1,7 +1,6 @@
 package com.bzt.controller;
 
 import java.math.BigDecimal;
-import java.net.URI;
 import java.util.List;
 
 import javax.validation.Valid;
@@ -22,58 +21,50 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.bzt.controller.dto.ProductDto;
 import com.bzt.controller.form.UpdateProductForm;
-import com.bzt.exception.ResourceNotFoundException;
 import com.bzt.model.Product;
-import com.bzt.repository.ProductRepository;
+import com.bzt.service.ProductService;
 
 
 @RestController
 @RequestMapping("/products")
 public class ProductController {
-	
 	@Autowired 
-	private ProductRepository productRepository;
+	private ProductService productService;
+	
+	
 	
 	@GetMapping
 	public List<Product> listProduct(){
-		return productRepository.findAll();
+		return productService.listProduct();
 	}
 	
 	@GetMapping("/{id}")
 	public Product detailsProduct(@PathVariable Long id) {
-		return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		return productService.findById(id);
 	    		  
 	}
 	
 	@PostMapping
 	@Transactional
 	public ResponseEntity<ProductDto> createProduct(@RequestBody @Valid Product product, UriComponentsBuilder uriBuilder) {
-		productRepository.save(product);
-		
-		URI uri = uriBuilder.path("/products/{id}").buildAndExpand(product.getId()).toUri();
-		return ResponseEntity.created(uri).body(new ProductDto(product));
+		return productService.createProduct(product, uriBuilder);
 	}	
 	
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductForm updateForm) {
-		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
-		updateForm.updateProduct(id, productRepository);
-		return ResponseEntity.ok(new ProductDto(product));
-		
+		return productService.updateProduct(id, updateForm);
 	}
 	
 	@DeleteMapping("/{id}")
 	@Transactional
 	public ResponseEntity<ProductDto> removeProduct(@PathVariable Long id){
-		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
-		productRepository.delete(product);
-		return ResponseEntity.ok().build();
+		return productService.removeProduct(id);
 	}
 	
 	@GetMapping("/search")
 	public List<Product> searchProduct(@RequestParam(required = false ,value = "q") String q, @RequestParam(required = false ,value = "minPrice") BigDecimal minPrice, @RequestParam(required = false , value = "maxPrice") BigDecimal maxPrice){
-		return productRepository.findBySearch(q, minPrice, maxPrice);
+		return productService.searchProduct(q, minPrice, maxPrice);
 	}
 	
 	
