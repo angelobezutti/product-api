@@ -3,7 +3,6 @@ package com.bzt.controller;
 import java.math.BigDecimal;
 import java.net.URI;
 import java.util.List;
-import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -23,10 +22,9 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.bzt.controller.dto.ProductDto;
 import com.bzt.controller.form.UpdateProductForm;
+import com.bzt.exception.ResourceNotFoundException;
 import com.bzt.model.Product;
 import com.bzt.repository.ProductRepository;
-
-
 
 
 @RestController
@@ -42,9 +40,9 @@ public class ProductController {
 	}
 	
 	@GetMapping("/{id}")
-	public ProductDto detailsProduct(@PathVariable Long id) {
-		 Product product = productRepository.getById(id);
-	      return new ProductDto(product);
+	public Product detailsProduct(@PathVariable Long id) {
+		return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+	    		  
 	}
 	
 	@PostMapping
@@ -59,24 +57,18 @@ public class ProductController {
 	@PutMapping("/{id}")
 	@Transactional
 	public ResponseEntity<ProductDto> updateProduct(@PathVariable Long id, @RequestBody @Valid UpdateProductForm updateForm) {
-		Optional<Product> optional = productRepository.findById(id);
-		if (optional.isPresent()) {
-			Product product = updateForm.updateProduct(id, productRepository);
-			return ResponseEntity.ok(new ProductDto(product));
-		}
+		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		updateForm.updateProduct(id, productRepository);
+		return ResponseEntity.ok(new ProductDto(product));
 		
-		return ResponseEntity.notFound().build();
 	}
 	
 	@DeleteMapping("/{id}")
 	@Transactional
-	public ResponseEntity<?> removeProduct(@PathVariable Long id){
-		Optional<Product> optional = productRepository.findById(id);
-		if (optional.isPresent()) {
-			productRepository.deleteById(id);
-			return ResponseEntity.ok().build();
-		}
-		return ResponseEntity.notFound().build();
+	public ResponseEntity<ProductDto> removeProduct(@PathVariable Long id){
+		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		productRepository.delete(product);
+		return ResponseEntity.ok().build();
 	}
 	
 	@GetMapping("/search")
