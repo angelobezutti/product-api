@@ -9,6 +9,11 @@ import javax.validation.constraints.NotNull;
 import com.bzt.model.Product;
 import com.bzt.repository.ProductRepository;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @AllArgsConstructor @NoArgsConstructor 
 public class UpdateProductForm {
 
 	@NotNull @NotEmpty
@@ -17,27 +22,6 @@ public class UpdateProductForm {
 	private String name;
 	@Min(value = 0)
 	private BigDecimal price;
-
-	public String getDescription() {
-		return description;
-	}
-	public void setDescription(String description) {
-		this.description = description;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public BigDecimal getPrice() {
-		return price;
-	}
-	public void setPrice(BigDecimal price) {
-		this.price = price;
-	}
 	
 	public Product updateProduct(Long id, ProductRepository productRepository) {
 		Product product = productRepository.getById(id);
@@ -48,5 +32,4 @@ public class UpdateProductForm {
 		
 		return product;
 	}
-	
 }

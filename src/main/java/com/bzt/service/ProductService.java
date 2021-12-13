@@ -12,7 +12,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import com.bzt.controller.dto.ProductDto;
 import com.bzt.controller.form.UpdateProductForm;
-import com.bzt.exception.ResourceNotFoundException;
 import com.bzt.model.Product;
 import com.bzt.repository.ProductRepository;
 
@@ -27,7 +26,7 @@ public class ProductService {
 	}
 	
 	public Product findById(Long id) {
-		return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		return productRepository.getById(id);
 	}
 	
 	public ResponseEntity<ProductDto> createProduct(Product product, UriComponentsBuilder uriBuilder) {
@@ -38,14 +37,14 @@ public class ProductService {
 	}
 	
 	public ResponseEntity<ProductDto> updateProduct(Long id, UpdateProductForm updateForm) {
-		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		Product product = productRepository.getById(id);
 		updateForm.updateProduct(id, productRepository);
 		return ResponseEntity.ok(new ProductDto(product));
 		
 	}
 	
 	public ResponseEntity<ProductDto> removeProduct(@PathVariable Long id){
-		Product product = productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product Not Found " + id));
+		Product product = productRepository.getById(id);
 		productRepository.delete(product);
 		return ResponseEntity.ok().build();
 	}

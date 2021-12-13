@@ -31,8 +31,6 @@ public class ProductController {
 	@Autowired 
 	private ProductService productService;
 	
-	
-	
 	@GetMapping
 	public List<Product> listProduct(){
 		return productService.listProduct();
@@ -66,6 +64,5 @@ public class ProductController {
 	public List<Product> searchProduct(@RequestParam(required = false ,value = "q") String q, @RequestParam(required = false ,value = "minPrice") BigDecimal minPrice, @RequestParam(required = false , value = "maxPrice") BigDecimal maxPrice){
 		return productService.searchProduct(q, minPrice, maxPrice);
 	}
-	
 	
 }

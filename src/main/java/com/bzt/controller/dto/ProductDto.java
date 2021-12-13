@@ -4,6 +4,11 @@ import java.math.BigDecimal;
 
 import com.bzt.model.Product;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+@Data @AllArgsConstructor @NoArgsConstructor 
 public class ProductDto {
 	private String description;
 	private Long id;
@@ -16,18 +21,4 @@ public class ProductDto {
 		this.name = product.getName();
 		this.price = product.getPrice();
 	}
-	
-	public String getDescription() {
-		return description;
-	}
-	public Long getId() {
-		return id;
-	}
-	public String getName() {
-		return name;
-	}
-	public BigDecimal getPrice() {
-		return price;
-	}
-	
 }
